@@ -5,7 +5,7 @@ import google.generativeai as palm
 
 # Load the Excel file
 def a7():
-    xls = pd.ExcelFile(r"C:\Users\Guest_User\Downloads\Data.xlsx")
+    xls = pd.ExcelFile(r"Data.xlsx")
 
     # Load the sheet with the questions
     sheet_name ='7.Quality Management'  # Adjust if necessary
