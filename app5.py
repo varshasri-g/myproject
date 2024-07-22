@@ -9,7 +9,7 @@ from docx import Document
 
 # Load the Excel file
 def a5():
-    xls = pd.ExcelFile(r"C:\Users\Guest_User\Downloads\varsha.xlsx")
+    xls = pd.ExcelFile(r"Data.xlsx")
 
     # Load the sheet with the questions
     sheet_name ='5.Materials Management'  # Adjust if necessary
