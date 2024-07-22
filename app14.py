@@ -4,7 +4,7 @@ import google.generativeai as palm
 from docx import Document
 def a14():
     # Load the Excel file
-    file_path = r"C:\Users\Guest_User\Downloads\Data.xlsx"
+    file_path = r"Data.xlsx"
     xls = pd.ExcelFile(file_path)
 
     # List all sheet names
