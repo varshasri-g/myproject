@@ -6,7 +6,7 @@ from docx import Document
 #from exceptions import PendingDeprecationWarning
 def a1():
     # Load the Excel file
-    file_path = "C:\\Users\\Guest_User\\Downloads\\Data.xlsx"
+    file_path = "Data.xlsx"
     xls = pd.ExcelFile(file_path)
 
     # Load the sheet with the questions
