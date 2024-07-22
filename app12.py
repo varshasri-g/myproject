@@ -7,7 +7,7 @@ from docx import Document
 
 # Load the Excel file
 def a12():
-    xls = pd.ExcelFile(r"C:\Users\Guest_User\Downloads\Data.xlsx")
+    xls = pd.ExcelFile("Data.xlsx")
 
     # Load the sheet with the questions
     sheet_name ='12.Finance'  # Adjust if necessary
