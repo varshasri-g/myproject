@@ -140,7 +140,7 @@ def a1():
                 if summary_df.shape[0] > 0:
                     # Save answers to Excel file
                     file_name = f"{user_name}_answers.xlsx"
-                    file_path = f"C:/Users/Guest_User/Desktop/Database/start here ques/{file_name}"  
+                    file_path = f"~Desktop/Database/start here ques/{file_name}"  
                     summary_df.to_excel(file_path, index=False)
                     
                     # Prepare summary text
@@ -154,7 +154,7 @@ def a1():
                     scope_suggestion = response.result
                     # Save the scope suggestion to a Word document
                     word_file_name = f"{user_name}_scope_for_SAP.docx"
-                    word_file_path = f"C:/Users/Guest_User/Desktop/Database/start here ques/Scopes/{word_file_name}"
+                    word_file_path = f"~Desktop/Database/start here ques/Scopes/{word_file_name}"
                     doc = Document()
                     doc.add_heading("Scope for SAP", level=1)
                     doc.add_paragraph(scope_suggestion)
