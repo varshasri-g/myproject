@@ -21,8 +21,7 @@ def a1():
     questions_by_category = {category: df[df['Category'] == category]['Qualification Question'].dropna().tolist() for category in categories}
 
     # Initialize Google Generative AI
-    #palm.configure(api_key="YOUR_API_KEY")  # Replace with your actual API key
-    api_key = os.getenv("GOOGLE_API_KEY")
+    palm.configure(api_key="AIzaSyBdb5z2W_YYIvyjk-iGN-DQY7uzcEyVEP4")
     
     # Streamlit app setup
     st.title("Qualification Questionnaire")
