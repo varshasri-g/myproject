@@ -3,7 +3,7 @@ import pandas as pd
 import google.generativeai as palm
 import os
 from docx import Document
-#from exceptions import PendingDeprecationWarning
+
 def a1():
     # Load the Excel file
     file_path = "Data.xlsx"
@@ -21,7 +21,6 @@ def a1():
     questions_by_category = {category: df[df['Category'] == category]['Qualification Question'].dropna().tolist() for category in categories}
 
     # Initialize Google Generative AI
-    #palm.configure(api_key="YOUR_API_KEY")  # Replace with your actual API key
     api_key = os.getenv("GOOGLE_API_KEY")
     
     # Streamlit app setup
@@ -140,28 +139,12 @@ def a1():
                 if summary_df.shape[0] > 0:
                     # Save answers to Excel file
                     file_name = f"{user_name}_answers.xlsx"
-                    file_path = f"~Desktop/Database/{file_name}"  
-                    summary_df.to_excel(file_path, index=False)
-                    
-                    # Prepare summary text
-                    summary_text = "\n".join([f"{row['Question']}: {row['Answer']}" for _, row in summary_df.iterrows()])
-                    # Ask the chatbot "What is the scope for SAP"
-                    response = palm.generate_text(
-                        model='models/text-bison-001',  # Adjust model name if necessary
-                        prompt=f"Based on the following answers, what is the scope for SAP?generate paragraph in concise manner\n\n{summary_text}",
-                        max_output_tokens=300
-                    )
-                    scope_suggestion = response.result
-                    # Save the scope suggestion to a Word document
-                    word_file_name = f"{user_name}_scope_for_SAP.docx"
-                    word_file_path = f"~Desktop/Database/Scopes/{word_file_name}"
-                    doc = Document()
-                    doc.add_heading("Scope for SAP", level=1)
-                    doc.add_paragraph(scope_suggestion)
-                    doc.save(word_file_path)
-                    st.success(f"Answers saved to {file_name} and Scope for SAP saved to {word_file_name}")
-                else:
-                    st.warning("No answers provided. Nothing to save.")
-            except Exception as e:
-                st.error(f"Error during submission: {e}")
-        
+                    desktop_path = os.path.expanduser("~/Desktop/Database")
+                    scopes_path = os.path.join(desktop_path, "Scopes")
+
+                    # Ensure directories exist
+                    os.makedirs(desktop_path, exist_ok=True)
+                    os.makedirs(scopes_path, exist_ok=True)
+
+                    file_path = os.path.join(desktop_path, file_name)
+                    summary_df.to_excel(file_path
