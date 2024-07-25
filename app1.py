@@ -138,7 +138,7 @@ def a1():
                 # Check if there are answers to save
                 if summary_df.shape[0] > 0:
                     # Ensure directories exist
-                    base_dir = os.path.expanduser("~/Desktop/Database")
+                    base_dir = os.path.expanduser("~/Desktop/Db")
                     scopes_dir = os.path.join(base_dir, "Scopes")
                     os.makedirs(base_dir, exist_ok=True)
                     os.makedirs(scopes_dir, exist_ok=True)
