@@ -171,5 +171,4 @@ def a1():
             except Exception as e:
                 st.error(f"Error during submission: {e}")
 
-if __name__ == "__main__":
-    a1()
+
