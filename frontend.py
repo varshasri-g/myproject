@@ -36,7 +36,7 @@ def start_here():
 
 # Define a function to display the main menu
 def main_menu():
-    image = Image.open(r"C:\Users\Guest_User\Downloads\logo1.png")
+    image = Image.open("logo1.png")
     col1, col2, col3 = st.columns([1, 2, 1])
 
 # Place the image in the center column
