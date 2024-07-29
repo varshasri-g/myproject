@@ -1,4 +1,6 @@
 import streamlit as st
+import streamlit as st
+from PIL import Image
 from app1 import a1
 from app3 import a3
 from app4 import a4
@@ -16,14 +18,36 @@ from app15 import a15
 
 # Define a function to display the "Start Here" page
 def start_here():
-    st.markdown("<h1 style='color: blue; text-align: center;'>Welcome to NTT DATA</h1>", unsafe_allow_html=True)
+    image=Image.open(r"C:\Users\Guest_User\Downloads\logo1.png")  # Add this line to display the image
+    col1, col2, col3 = st.columns([1, 2, 1])
+
+# Place the image in the center column
+    with col1:
+        st.write("")
+
+    with col2:
+        st.image(image, caption='', use_column_width=True)
+
+    with col3:
+        st.write("")
     st.markdown("<p style='text-align: center;'>Click the button below to get started.</p>", unsafe_allow_html=True)
     if st.button('Start Here', key='start_here_button', use_container_width=True):
         st.session_state.page = 'Main Menu'
 
 # Define a function to display the main menu
 def main_menu():
-    st.markdown("<h1 style='color: blue; text-align: center;'>NTT DATA</h1>", unsafe_allow_html=True)
+    image = Image.open(r"C:\Users\Guest_User\Downloads\logo1.png")
+    col1, col2, col3 = st.columns([1, 2, 1])
+
+# Place the image in the center column
+    with col1:
+        st.write("")
+
+    with col2:
+        st.image(image, caption='', use_column_width=True)
+
+    with col3:
+        st.write("")
     st.text_input("Search Module...")
 
     # Create columns for the buttons
@@ -173,5 +197,3 @@ st.markdown("""
         }
     </style>
 """, unsafe_allow_html=True)
-
-
