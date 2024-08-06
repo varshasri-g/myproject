@@ -44,7 +44,7 @@ def create_word_document(text):
 st.title("Landscape Questionnaire")
 
 # Initialize session state variables
-questions_by_category = load_data()
+questions_by_category = a3()
 if 'user_answers1' not in st.session_state:
     st.session_state.user_answers1 = {category: [""] * len(questions) for category, questions in questions_by_category.items()}
 
