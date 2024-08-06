@@ -1,9 +1,9 @@
-
 import streamlit as st
 import pandas as pd
 import google.generativeai as palm
 import os
 from docx import Document
+from io import BytesIO
 
 # Load the Excel file
 def a3():
@@ -27,12 +27,11 @@ def a3():
         for category, questions in questions_df.groupby('Category')
     }
 
-
     # Initialize Google Generative AI
     api_key = os.getenv("GOOGLE_API_KEY")
 
     # Streamlit app setup
-    st.title("Landscape  Questionnaire")
+    st.title("Landscape Questionnaire")
 
     # Initialize session state variables
     if 'user_answers1' not in st.session_state:
@@ -83,8 +82,6 @@ def a3():
                 st.text_area("Suggested Answer", value=st.session_state.suggestions1[category][i], height=100, key=f"suggestion_text_{category}_{i}")
 
     # Display summary of all answers
-
-
     if selected_category == "Summary":
         st.header("Summary of All Answers")
         summary_data = []
@@ -97,56 +94,69 @@ def a3():
                 st.write(f"Q{i + 1}: {question}")
                 st.write(f"A{i + 1}: {answer}")
         summary_df = pd.DataFrame(summary_data)
-        #st.write(summary_df)
 
-        # Save to Excel button
-    
-    
+        # Convert summary_df to Excel file for download
+        excel_buffer = BytesIO()
+        with pd.ExcelWriter(excel_buffer, engine='xlsxwriter') as writer:
+            summary_df.to_excel(writer, index=False, sheet_name='Summary')
+        excel_buffer.seek(0)
 
-        # Submit button for all answers with confirmation
-            # Save to Excel button
+        # Convert scope suggestion to Word document for download
+        def create_word_document(text):
+            doc = Document()
+            doc.add_heading("Scope for SAP", level=1)
+            doc.add_paragraph(text)
+            word_buffer = BytesIO()
+            doc.save(word_buffer)
+            word_buffer.seek(0)
+            return word_buffer
+
+        # User name input
         user_name = st.text_input("Enter your name:")
         if user_name:
             st.write(f"Hello, {user_name}!")
-    
-
-        ## Submit button for all answers with confirmation
 
         if st.button("Submit"):
-                    try:
-                        # Check if there are answers to save
-                        if summary_df.shape[0] > 0:
-                            # Save answers to Excel file
-                            file_name = f"{user_name}_answers.xlsx"
-                            file_path = f"C:/Users/Guest_User/Desktop/Database/start here ques/{file_name}"  
-                            summary_df.to_excel(file_path, index=False)
-                            
-                            # Prepare summary text
-                            summary_text = "\n".join([f"{row['Question']}: {row['Answer']}" for _, row in summary_df.iterrows()])
-                            # Ask the chatbot "What is the scope for SAP"
-                            response = palm.generate_text(
-                                model='models/text-bison-001',  # Adjust model name if necessary
-                                prompt=f"Based on the following answers, what is the scope for SAP?generate paragraph in concise manner\n\n{summary_text}",
-                                max_output_tokens=300
-                            )
-                            scope_suggestion = response.result
-                            # Save the scope suggestion to a Word document
-                            word_file_name = f"{user_name}_scope_for_SAP.docx"
-                            word_file_path = f"C:/Users/Guest_User/Desktop/Database/start here ques/Scopes/{word_file_name}"
-                            doc = Document()
-                            doc.add_heading("Scope for SAP", level=1)
-                            doc.add_paragraph(scope_suggestion)
-                            doc.save(word_file_path)
-                            st.success(f"Answers saved to {file_name} and Scope for SAP saved to {word_file_name}")
-                        else:
-                            st.warning("No answers provided. Nothing to save.")
-                    except Exception as e:
-                        st.error(f"Error during submission: {e}")
+            try:
+                # Check if there are answers to save
+                if summary_df.shape[0] > 0:
+                    # Prepare summary text
+                    summary_text = "\n".join([f"{row['Question']}: {row['Answer']}" for _, row in summary_df.iterrows()])
+                    # Ask the chatbot "What is the scope for SAP"
+                    response = palm.generate_text(
+                        model='models/text-bison-001',  # Adjust model name if necessary
+                        prompt=f"Based on the following answers, what is the scope for SAP? Generate paragraph in concise manner\n\n{summary_text}",
+                        max_output_tokens=300
+                    )
+                    scope_suggestion = response.result
 
-        # Run the app
+                    # Create word document buffer
+                    word_buffer = create_word_document(scope_suggestion)
 
+                    # Provide download buttons
+                    st.download_button(
+                        label="Download Answers",
+                        data=excel_buffer,
+                        file_name=f"{user_name}_answers.xlsx",
+                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    )
 
+                    st.download_button(
+                        label="Download Scope for SAP",
+                        data=word_buffer,
+                        file_name=f"{user_name}_scope_for_SAP.docx",
+                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    )
+                    
+                    st.success(f"Answers and Scope for SAP are ready for download.")
+                else:
+                    st.warning("No answers provided. Nothing to save.")
+            except Exception as e:
+                st.error(f"Error during submission: {e}")
+
+# Run the app
 a3()
+
 
 
 
