@@ -3,6 +3,7 @@ import pandas as pd
 import google.generativeai as palm
 import os
 from docx import Document
+from io import BytesIO
 
 def a1():
     # Load the Excel file
@@ -137,16 +138,10 @@ def a1():
             try:
                 # Check if there are answers to save
                 if summary_df.shape[0] > 0:
-                    # Ensure directories exist
-                    base_dir = os.path.expanduser("~/Desktop")
-                    scopes_dir = os.path.join(base_dir, "Scopes")
-                    os.makedirs(base_dir, exist_ok=True)
-                    os.makedirs(scopes_dir, exist_ok=True)
-                    
                     # Save answers to Excel file
-                    file_name = f"{user_name}_answers.xlsx"
-                    file_path = os.path.join(base_dir, file_name)  
-                    summary_df.to_excel(file_path, index=False)
+                    excel_buffer = BytesIO()
+                    summary_df.to_excel(excel_buffer, index=False)
+                    excel_buffer.seek(0)
                     
                     # Prepare summary text
                     summary_text = "\n".join([f"{row['Question']}: {row['Answer']}" for _, row in summary_df.iterrows()])
@@ -157,17 +152,39 @@ def a1():
                         max_output_tokens=300
                     )
                     scope_suggestion = response.result
+
                     # Save the scope suggestion to a Word document
-                    word_file_name = f"{user_name}_scope_for_SAP.docx"
-                    word_file_path = os.path.join(scopes_dir, word_file_name)
                     doc = Document()
                     doc.add_heading("Scope for SAP", level=1)
                     doc.add_paragraph(scope_suggestion)
-                    doc.save(word_file_path)
-                    st.success(f"Answers saved to {file_name} and Scope for SAP saved to {word_file_name}")
+                    word_buffer = BytesIO()
+                    doc.save(word_buffer)
+                    word_buffer.seek(0)
+
+                    # Provide download links for the generated files
+                    st.download_button(
+                        label="Download Answers",
+                        data=excel_buffer,
+                        file_name=f"{user_name}_answers.xlsx",
+                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    )
+
+                    st.download_button(
+                        label="Download Scope for SAP",
+                        data=word_buffer,
+                        file_name=f"{user_name}_scope_for_SAP.docx",
+                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    )
+
+                    st.success(f"Answers and Scope for SAP are ready for download.")
                 else:
                     st.warning("No answers provided. Nothing to save.")
             except Exception as e:
                 st.error(f"Error during submission: {e}")
+
+if __name__ == "__main__":
+    a1()
+
+
 
 
