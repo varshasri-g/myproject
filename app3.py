@@ -6,7 +6,7 @@ from docx import Document
 from io import BytesIO
 
 # Load the Excel file
-def load_questions():
+def a3():
     xls = pd.ExcelFile("Data.xlsx")
     sheet_name = '3.Landscape Details'
     df = pd.read_excel(xls, sheet_name)
