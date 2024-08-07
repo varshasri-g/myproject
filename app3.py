@@ -1,5 +1,4 @@
 import streamlit as st
-
 import pandas as pd
 import google.generativeai as palm
 import os
@@ -8,13 +7,13 @@ from io import BytesIO
 
 # Load the Excel file
 def a3():
-    xls = pd.ExcelFile(r"Data.xlsx")
+    xls = pd.ExcelFile("Data.xlsx")
 
     # Load the sheet with the questions
-    sheet_name ='3.Landscape Details'  # Adjust if necessary
+    sheet_name = '3.Landscape Details'
     df = pd.read_excel(xls, sheet_name)
 
-    # Example: Assume we identify correct column names for 'Category' and 'Qualification Question'
+    # Process the data
     df['Category'] = df['Component'].fillna(method='ffill')
     questions_df = df.dropna(subset=['Query'])
     questions_by_category = {
@@ -24,9 +23,8 @@ def a3():
 
     palm.configure(api_key="AIzaSyBdb5z2W_YYIvyjk-iGN-DQY7uzcEyVEP4")
 
-
     # Streamlit app setup
-    st.title("Landscape Questionaire")
+    st.title("Landscape Questionnaire")
 
     # Initialize session state variables
     if 'user_answers2' not in st.session_state:
@@ -37,14 +35,12 @@ def a3():
 
     def get_suggestion(question):
         try:
-            # Use the Google Generative AI API to get a suggestion
             response = palm.generate_text(
-                model='models/text-bison-001',  # Replace with the correct model name if necessary
+                model='models/text-bison-001',
                 prompt=f"Provide a suggestion for the following question according to the material management: {question}",
                 max_output_tokens=150
             )
-            suggestion = response.result
-            return suggestion
+            return response.result
         except Exception as e:
             return f"Error: {e}"
 
@@ -69,7 +65,8 @@ def a3():
             if st.button("Suggestion", key=f"suggestion_{category}_{i}"):
                 suggestion = get_suggestion(question)
                 st.session_state.suggestions2[category][i] = suggestion
-                st.experimental_rerun()
+                # Comment out or handle rerun differently
+                # st.experimental_rerun()
             
             if st.session_state.suggestions2[category][i]:
                 st.write("Suggestion:")
@@ -96,21 +93,18 @@ def a3():
         if st.button("Submit"):
             try:
                 if summary_df.shape[0] > 0:
-                    # Save answers to a BytesIO buffer
                     excel_buffer = BytesIO()
                     summary_df.to_excel(excel_buffer, index=False)
                     excel_buffer.seek(0)
 
-                    # Generate scope suggestion
                     summary_text = "\n".join([f"{row['Question']}: {row['Answer']}" for _, row in summary_df.iterrows()])
                     response = palm.generate_text(
-                        model='models/text-bison-001',  # Adjust model name if necessary
+                        model='models/text-bison-001',
                         prompt=f"Based on the following answers, what is the scope for SAP? generate paragraph in concise manner\n\n{summary_text}",
                         max_output_tokens=300
                     )
                     scope_suggestion = response.result
 
-                    # Save the scope suggestion to a BytesIO buffer as a Word document
                     doc = Document()
                     doc.add_heading("Scope for SAP", level=1)
                     doc.add_paragraph(scope_suggestion)
@@ -118,7 +112,6 @@ def a3():
                     doc.save(word_buffer)
                     word_buffer.seek(0)
 
-                    # Provide download buttons
                     st.download_button(
                         label="Download Answers",
                         data=excel_buffer,
@@ -136,4 +129,5 @@ def a3():
                 else:
                     st.warning("No answers provided. Nothing to save.")
             except Exception as e:
-                st.error(f"Error during submission: {e}")
+                st.error(f"Error: {e}")
+
