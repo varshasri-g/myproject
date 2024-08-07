@@ -42,11 +42,11 @@ def a4():
     st.title("Organisation Structure Questionnaire")
 
     # Initialize session state variables
-    if 'user_answers2' not in st.session_state:
-        st.session_state.user_answers2 = [""] * len(questions)
+    if 'user_answers3' not in st.session_state:
+        st.session_state.user_answers3 = [""] * len(questions)
 
-    if 'suggestions2' not in st.session_state:
-        st.session_state.suggestions2 = [""] * len(questions)
+    if 'suggestions3' not in st.session_state:
+        st.session_state.suggestions3 = [""] * len(questions)
 
     def get_suggestion(question):
         try:
@@ -70,19 +70,19 @@ def a4():
         for i, question in enumerate(questions):
             st.write(f"Q{i + 1}: {question}")
 
-            user_answer = st.text_input("Your answer", value=st.session_state.user_answers2[i], key=f"answer_input_{i}")
-            st.session_state.user_answers2[i] = user_answer
+            user_answer = st.text_input("Your answer", value=st.session_state.user_answers3[i], key=f"answer_input_{i}")
+            st.session_state.user_answers3[i] = user_answer
 
             # Button to generate suggestion
             if st.button("Suggestion", key=f"suggestion_{i}"):
                 suggestion = get_suggestion(question)
-                st.session_state.suggestions2[i] = suggestion
+                st.session_state.suggestions3[i] = suggestion
                 st.experimental_rerun()
 
             # Display the suggestion if it exists
-            if st.session_state.suggestions2[i]:
+            if st.session_state.suggestions3[i]:
                 st.write("Suggestion:")
-                st.text_area("Suggested Answer", value=st.session_state.suggestions2[i], height=100, key=f"suggestion_text_{i}")
+                st.text_area("Suggested Answer", value=st.session_state.suggestions3[i], height=100, key=f"suggestion_text_{i}")
 
     elif selected_option == "Summary":
         # Display summary of all answers
@@ -90,7 +90,7 @@ def a4():
         summary_data = []
 
         for i, question in enumerate(questions):
-            answer = st.session_state.user_answers2[i]
+            answer = st.session_state.user_answers3[i]
             summary_data.append({'Question': question, 'Answer': answer})
             st.write(f"Q{i + 1}: {question}")
             st.write(f"A{i + 1}: {answer}")
