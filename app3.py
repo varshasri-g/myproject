@@ -7,7 +7,7 @@ from docx import Document
 from io import BytesIO
 
 # Load the Excel file
-def a5():
+def a3():
     xls = pd.ExcelFile(r"Data.xlsx")
 
     # Load the sheet with the questions
@@ -22,10 +22,11 @@ def a5():
         for category, questions in questions_df.groupby('Category')
     }
 
-    api_key = os.getenv("GOOGLE_API_KEY")
+    palm.configure(api_key="AIzaSyBdb5z2W_YYIvyjk-iGN-DQY7uzcEyVEP4")
+
 
     # Streamlit app setup
-    st.title("Material Management Questionnaire")
+    st.title("Landscape Questionaire")
 
     # Initialize session state variables
     if 'user_answers2' not in st.session_state:
