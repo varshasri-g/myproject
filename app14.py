@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import google.generativeai as palm
 from docx import Document
+from io import BytesIO
 def a14():
     # Load the Excel file
     file_path = r"Data.xlsx"
@@ -114,35 +115,45 @@ def a14():
         # Submit button for all answers with confirmation
         if st.button("Submit"):
             try:
-                # Check if there are answers to save
                 if summary_df.shape[0] > 0:
-                    # Save answers to Excel file
-                    file_name = f"{user_name}_answers.xlsx"
-                    file_path = f"C:/Users/Guest_User/Desktop/Database/hr/{file_name}"  
-                    summary_df.to_excel(file_path, index=False)
-                    
-                    # Prepare summary text
+                    # Save answers to a BytesIO buffer
+                    excel_buffer = BytesIO()
+                    summary_df.to_excel(excel_buffer, index=False)
+                    excel_buffer.seek(0)
+
+                    # Generate scope suggestion
                     summary_text = "\n".join([f"{row['Question']}: {row['Answer']}" for _, row in summary_df.iterrows()])
-                    # Ask the chatbot "What is the scope for SAP"
                     response = palm.generate_text(
                         model='models/text-bison-001',  # Adjust model name if necessary
-                        prompt=f"Based on the following answers, what is the scope for SAP?generate paragraph in concise manner\n\n{summary_text}",
+                        prompt=f"Based on the following answers, what is the scope for SAP? generate paragraph in concise manner\n\n{summary_text}",
                         max_output_tokens=300
                     )
                     scope_suggestion = response.result
-                    # Save the scope suggestion to a Word document
-                    word_file_name = f"{user_name}_scope_for_SAP.docx"
-                    word_file_path = f"C:/Users/Guest_User/Desktop/Database/hr/Scopes/{word_file_name}"
+
+                    # Save the scope suggestion to a BytesIO buffer as a Word document
                     doc = Document()
                     doc.add_heading("Scope for SAP", level=1)
                     doc.add_paragraph(scope_suggestion)
-                    doc.save(word_file_path)
-                    st.success(f"Answers saved to {file_name} and Scope for SAP saved to {word_file_name}")
+                    word_buffer = BytesIO()
+                    doc.save(word_buffer)
+                    word_buffer.seek(0)
+
+                    # Provide download buttons
+                    st.download_button(
+                        label="Download Answers",
+                        data=excel_buffer,
+                        file_name=f"{user_name}_answers.xlsx",
+                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    )
+
+                    st.download_button(
+                        label="Download Scope for SAP",
+                        data=word_buffer,
+                        file_name=f"{user_name}_scope_for_SAP.docx",
+                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    )
+                    st.success("Files are ready for download.")
                 else:
                     st.warning("No answers provided. Nothing to save.")
             except Exception as e:
                 st.error(f"Error during submission: {e}")
-
-
-    # Submit button for all answers
-
