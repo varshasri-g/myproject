@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import google.generativeai as palm
 from docx import Document
-import io
+from io import BytesIO
 
 def a4():
     # Load the Excel file
