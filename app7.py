@@ -76,7 +76,7 @@ def a7():
             if st.button("Suggestion", key=f"suggestion_{category}_{i}"):
                 suggestion = get_suggestion(question)
                 st.session_state.suggestions7[category][i] = suggestion
-                st.experimental_rerun()
+                #st.experimental_rerun()
             
             # Display the suggestion if it exists
             if st.session_state.suggestions7[category][i]:
