@@ -3,7 +3,7 @@ import streamlit as st
 from PIL import Image
 from app1 import a1
 from app3 import a3
-#from app4 import a4
+from app4 import a4
 from app5 import a5
 from app6 import a6
 from app7 import a7
@@ -64,8 +64,8 @@ def main_menu():
             st.session_state.page = 'Finance'
         
     with col2:
-        #if st.button('Organization Management'):
-            #st.session_state.page = 'Organization Management'
+        if st.button('Organization Management'):
+            st.session_state.page = 'Organization Management'
         if st.button('Sales and Distribution'):
             st.session_state.page = 'Sales and Distribution'
         if st.button('Human Resources'):
