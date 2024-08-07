@@ -151,7 +151,6 @@ def a4():
                 st.error(f"Error during submission: {e}")
 
 # Run the app
-if __name__ == "__main__":
-    a4()
+
 
 
