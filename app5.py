@@ -67,7 +67,7 @@ def a5():
             if st.button("Suggestion", key=f"suggestion_{category}_{i}"):
                 suggestion = get_suggestion(question)
                 st.session_state.suggestions3[category][i] = suggestion
-                st.experimental_rerun()
+                #st.experimental_rerun()
             
             if st.session_state.suggestions3[category][i]:
                 st.write("Suggestion:")
