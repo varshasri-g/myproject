@@ -6,7 +6,7 @@ from docx import Document
 from io import BytesIO
 
 # Load the Excel file
-def a3():
+def load_questions():
     xls = pd.ExcelFile("Data.xlsx")
     sheet_name = '3.Landscape Details'
     df = pd.read_excel(xls, sheet_name)
@@ -44,12 +44,12 @@ def create_word_document(text):
 st.title("Landscape Questionnaire")
 
 # Initialize session state variables
-questions_by_category = a3()
-if 'user_answers1' not in st.session_state:
-    st.session_state.user_answers1 = {category: [""] * len(questions) for category, questions in questions_by_category.items()}
+questions_by_category = load_questions()
+if 'user_answers' not in st.session_state:
+    st.session_state.user_answers = {category: [""] * len(questions) for category, questions in questions_by_category.items()}
 
-if 'suggestions1' not in st.session_state:
-    st.session_state.suggestions1 = {category: [""] * len(questions) for category, questions in questions_by_category.items()}
+if 'suggestions' not in st.session_state:
+    st.session_state.suggestions = {category: [""] * len(questions) for category, questions in questions_by_category.items()}
 
 # Sidebar for category selection
 st.sidebar.title("Categories")
@@ -66,24 +66,24 @@ if selected_category and selected_category != "Summary":
     for i, question in enumerate(questions):
         st.write(f"Q{i + 1}: {question}")
         
-        user_answer = st.text_input("Your answer", value=st.session_state.user_answers1[category][i], key=f"answer_input_{category}_{i}")
-        st.session_state.user_answers1[category][i] = user_answer
+        user_answer = st.text_input("Your answer", value=st.session_state.user_answers[category][i], key=f"answer_input_{category}_{i}")
+        st.session_state.user_answers[category][i] = user_answer
         
         if st.button("Suggestion", key=f"suggestion_{category}_{i}"):
             suggestion = get_suggestion(question)
-            st.session_state.suggestions1[category][i] = suggestion
+            st.session_state.suggestions[category][i] = suggestion
             
         # Display the suggestion if it exists
-        if st.session_state.suggestions1[category][i]:
+        if st.session_state.suggestions[category][i]:
             st.write("Suggestion:")
-            st.text_area("Suggested Answer", value=st.session_state.suggestions1[category][i], height=100, key=f"suggestion_text_{category}_{i}")
+            st.text_area("Suggested Answer", value=st.session_state.suggestions[category][i], height=100, key=f"suggestion_text_{category}_{i}")
 
 # Display summary of all answers
 if selected_category == "Summary":
     st.header("Summary of All Answers")
     summary_data = []
     
-    for category, answers in st.session_state.user_answers1.items():
+    for category, answers in st.session_state.user_answers.items():
         for i, answer in enumerate(answers):
             question = questions_by_category[category][i]
             summary_data.append({'Category': category, 'Question': question, 'Answer': answer})
@@ -109,7 +109,7 @@ if selected_category == "Summary":
                 summary_text = "\n".join([f"{row['Question']}: {row['Answer']}" for _, row in summary_df.iterrows()])
                 response = palm.generate_text(
                     model='models/text-bison-001',
-                    prompt=f"Based on the following answers, what is the scope for SAP? Generate paragraph in a concise manner\n\n{summary_text}",
+                    prompt=f"Based on the following answers, what is the scope for SAP? Generate a paragraph in a concise manner\n\n{summary_text}",
                     max_output_tokens=300
                 )
                 scope_suggestion = response.result
@@ -136,6 +136,7 @@ if selected_category == "Summary":
                 st.warning("No answers provided. Nothing to save.")
         except Exception as e:
             st.error(f"Error during submission: {e}")
+
 
 
 
