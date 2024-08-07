@@ -1,7 +1,9 @@
-
 import streamlit as st
 import pandas as pd
 import google.generativeai as palm
+import os
+from docx import Document
+from io import BytesIO
 
 # Load the Excel file
 def a8():
