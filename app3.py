@@ -18,7 +18,7 @@ def a3():
     df['Category'] = df['Component'].fillna(method='ffill')
     questions_df = df.dropna(subset=['Query'])
     questions_by_category = {
-        category: questions['Question'].tolist()
+        category: questions['Query'].tolist()
         for category, questions in questions_df.groupby('Category')
     }
 
