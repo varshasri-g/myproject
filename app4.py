@@ -23,20 +23,19 @@ def a4():
     # Check if the given sheet exists and handle the exception
     try:
         check_sheet_exists(sheet_name, sheet_names)
-        
         df = pd.read_excel(xls, sheet_name)
     except ValueError as e:
         st.error(str(e))
         st.stop()
 
-    # Drop rows where 'Question' column is NaN
+    # Drop rows where 'Questions' column is NaN
     questions_df = df.dropna(subset=['Questions'])
 
     # Convert questions to a list
     questions = questions_df['Questions'].tolist()
 
     # Initialize Google Generative AI
-    palm.configure(api_key="AIzaSyBdb5z2W_YYIvyjk-iGN-DQY7uzcEyVEP4") # Replace with your API key
+    palm.configure(api_key="YOUR_API_KEY") # Replace with your API key
 
     # Streamlit app setup
     st.title("Organisation Structure Questionnaire")
@@ -56,8 +55,7 @@ def a4():
                 prompt=f"Provide a suggestion for the following question according to the organization structure: {question}",
                 max_output_tokens=150
             )
-            suggestion = response.result
-            return suggestion
+            return response.result
         except Exception as e:
             return f"Error: {e}"
 
@@ -66,7 +64,7 @@ def a4():
     selected_option = st.sidebar.radio("Go to", options=["Questionnaire", "Summary"])
 
     if selected_option == "Questionnaire":
-        # Display questions
+        # Display questions and answers
         for i, question in enumerate(questions):
             st.write(f"Q{i + 1}: {question}")
 
@@ -77,7 +75,6 @@ def a4():
             if st.button("Suggestion", key=f"suggestion_{i}"):
                 suggestion = get_suggestion(question)
                 st.session_state.suggestions3[i] = suggestion
-                st.experimental_rerun()
 
             # Display the suggestion if it exists
             if st.session_state.suggestions3[i]:
@@ -156,4 +153,5 @@ def a4():
 # Run the app
 if __name__ == "__main__":
     a4()
+
 
