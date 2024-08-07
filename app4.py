@@ -35,7 +35,7 @@ def a4():
     questions = questions_df['Questions'].tolist()
 
     # Initialize Google Generative AI
-    palm.configure(api_key="YOUR_API_KEY") # Replace with your API key
+    palm.configure(api_key="AIzaSyBdb5z2W_YYIvyjk-iGN-DQY7uzcEyVEP4"") # Replace with your API key
 
     # Streamlit app setup
     st.title("Organisation Structure Questionnaire")
