@@ -66,7 +66,7 @@ def main_menu():
         
     with col2:
         if st.button('Organization Management'):
-            st.session_state.page = 'Organization Management'
+            st.session_state.page = 'Quality Management'
         if st.button('Sales and Distribution'):
             st.session_state.page = 'Sales and Distribution'
         if st.button('Human Resources'):
@@ -101,7 +101,7 @@ def main_menu():
             st.session_state.page = 'Project Systems'
     with col8:
         if st.button('Quality Management'):
-            st.session_state.page = 'Quality Management'
+            st.session_state.page = 'Organization Management'
 
 # Check if 'page' is in session state
 if 'page' not in st.session_state:
